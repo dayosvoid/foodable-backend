@@ -3,10 +3,10 @@ const errorHandling = (err,req,res,next)=>{
     let statusCode = err.statusCode || 500 
     let message = err.message || "internal server error"
 
-    // incase user input an already existing email whhile registering
+    // incase user input an already existing email while registering
     if(err.code === 11000){
-        statusCode = 400;
-        message = "Email address already exist. please login"
+             statusCode = 400;
+            message = "Email address already exist. please login"
     }
 
     // Handle Mongoose Validation Errors (missing fields in schema)

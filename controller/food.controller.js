@@ -54,20 +54,20 @@ const handleCreateFood = async(req,res,next)=>{
 }
 
 const handleGetAllFoods = async(req,res,next)=>{
-    const {userId} = req.user
+    const userId = req.user._id
     if(!userId){
-        return next(new customError("authorizied user",400))
+        return next(new customError("un-authorizied user",400))
     }
     try {
-        const allMeal = await FOOD.findById(userId)
-        if(!allMeal){
-            return next(new customError("No meals yet",404))
+        const allMeals = await FOOD.find({user:userId})
+         if (!allMeals.length) {
+            return next(new customError("No meals yet", 404))
         }
 
         return res.status(200).json({
             success:true,
             message:"all meals",
-            allMeal
+            allMeals
         })
         
     } catch (error) {
