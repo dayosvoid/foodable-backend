@@ -4,12 +4,15 @@ const customError  = require("../utils/customError")
 
 const handleCreateFood = async(req,res,next)=>{
     // console.log("hitting route")
+     console.log("req.body:", req.body)
     const {name,day,mealPeriod} = req.body
     const userId = req.user._id 
 
-    if( !day || !name ||!mealPeriod){
-         return next(new customError("all input-fields are required", 400))
-    }
+    const isMissing = (val) => val === undefined || val === null || val === ""
+
+        if (isMissing(name) || isMissing(day) || isMissing(mealPeriod)) {
+            return next(new customError("All fields are required", 400))
+        }
 
     if(!userId){
          return next(new customError("all input-fields are required1", 400)) 
@@ -24,7 +27,7 @@ const handleCreateFood = async(req,res,next)=>{
         // get all meals for this user on this day
         const mealOnThisDay = await FOOD.find({user:userId,day})
 
-        if(mealOnThisDay >= 3){
+        if(mealOnThisDay.length >= 3){
             return next(new customError(`You already have 3 meals on ${day}. Remove one to add a new meal`, 400))
         }
 
@@ -64,10 +67,13 @@ const handleGetAllFoods = async(req,res,next)=>{
             return next(new customError("No meals yet", 404))
         }
 
+        const dayOrder = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        const sortedMeals = allMeals.sort((a,b)=>dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day))
+
         return res.status(200).json({
             success:true,
-            message:"all meals",
-            allMeals
+            message:"All meals",
+            allMeals:sortedMeals
         })
         
     } catch (error) {

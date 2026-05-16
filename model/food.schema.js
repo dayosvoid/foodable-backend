@@ -13,14 +13,16 @@ const foodSchema = new mongoose.Schema({
     required:true,
   },
   day:{
-    type:String,
-    enum: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"], 
+    type:Number,
+    min:0,
+    max:6,
     required: true,
   },
 
   mealPeriod :{
     type:String,
-    enum:["breakfast", "lunch", "dinner"],
+    min: 0,
+    max:2,
     required:true
   }
 
