@@ -16,8 +16,13 @@ app.use(express.json())
 
 app.use(cors({
     origin:process.env.FONTEND_URL,
-    credentials:"true"
+    credentials:true
 }))
+
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Foodable API is running' })
+}) 
+
 app.use("/api/foodable/food", foodRoute)
 app.use("/api/foodable/user", userRoute)
 
