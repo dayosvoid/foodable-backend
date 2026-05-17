@@ -15,7 +15,7 @@ PORT = process.env.PORT || 2000
 app.use(express.json())
 
 app.use(cors({
-    origin:process.env.FONTEND_URL,
+    origin:process.env.FRONTEND_URL,
     credentials:true
 }))
 
