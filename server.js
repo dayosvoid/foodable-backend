@@ -14,10 +14,36 @@ PORT = process.env.PORT || 2000
 
 app.use(express.json())
 
+const cors = require("cors");
+
+// 1. Create a checklist of explicit domains
+const allowedOrigins = [
+  "https://foodable-frontend-ashen.vercel.app",
+  process.env.FONTEND_URL // matching your .env spelling
+];
+
 app.use(cors({
-    origin:process.env.FRONTEND_URL,
-    credentials:true
-}))
+  origin: function (origin, callback) {
+    // Allow local tools like Postman or server-to-server calls
+    if (!origin) return callback(null, true);
+
+    // Clean up the string to prevent hidden spaces from breaking matches
+    const sanitizedOrigin = origin.trim();
+
+    const isExplicitlyAllowed = allowedOrigins.includes(sanitizedOrigin);
+    const isVercelPreview = sanitizedOrigin.endsWith(".vercel.app");
+
+    if (isExplicitlyAllowed || isVercelPreview) {
+      // Approve the request and reflect the exact origin back to the browser
+      return callback(null, true);
+    } else {
+      // Log to your Render dashboard exactly what domain was blocked
+      console.warn(`[CORS Blocked]: ${sanitizedOrigin} tried to access the API.`);
+      return callback(null, false);
+    }
+  },
+  credentials: true
+}));
 
 app.get('/', (req, res) => {
     res.status(200).json({ message: 'Foodable API is running' })
